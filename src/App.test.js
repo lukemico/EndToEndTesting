@@ -26,6 +26,14 @@ let errors = []
 beforeAll(async () => {
   browser = await puppeteer.launch(isDebugging())
   page = await browser.newPage()
+  await page.setRequestInterception(true)
+  page.on('request', interceptedRequest => {
+      if (interceptedRequest.url.includes('swapi')) {
+       interceptedRequest.abort()   
+      } else {
+          interceptedRequest.continue()
+      }
+  })
 
   page.on('console', msg => logs.push(msg.text))
   page.on('pageerror', error => errors.push(error.text))
@@ -50,10 +58,10 @@ describe('on page load ', () => {
 
     expect(navbar).toBe(true)
     // uncomment following code to see screenshot in action
-    // if (listItems.length !== 3) 
-    //   await page.screenshot({path: 'screenshot.png'})
+    if (listItems.length !== 3) 
+      await page.screenshot({path: 'screenshot.png'})
 
-    // expect(listItems.length).toBe(3)
+    expect(listItems.length).toBe(3)
 
     if (listItems.length !== 4) 
       await page.screenshot({path: 'screenshot.png'})
@@ -101,10 +109,14 @@ describe('on page load ', () => {
 //     expect(newLogs.length).toBe(0)
 //   })
 
-  test('does not have exceptions', () => {
+  test.skip('does not have exceptions', () => {
     expect(errors.length).toBe(0)
   })
 
+  test('fails to fetch starWars endpoint', async () => {
+      const h3 = await page.$eval('[data-testid="starWars"]', e => e.innerHTML)
+      expect(h3).toBe('Something went wrong')
+  })
 })
 
 afterAll(() => {
