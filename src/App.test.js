@@ -88,10 +88,10 @@ describe('on page load ', () => {
     })
   })
 
-//   test('does not have any console logs', () => {
-//     const newLogs = logs.filter( s => s !== '%cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold')
-//     expect(newLogs.length).toBe(0)
-//   })
+  test('does not have any console logs', () => {
+    const newLogs = logs.filter( s => s !== '%cDownload the React DevTools for a better development experience: https://fb.me/react-devtools font-weight:bold')
+    expect(newLogs.length).toBe(0)
+  })
 
   test('does not have exceptions', () => {
     expect(errors.length).toBe(0)
